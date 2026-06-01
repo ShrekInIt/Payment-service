@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: payment-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init:/docker-entrypoint-initdb.d
+    networks:
+      - credit-network
+
+volumes:
+  postgres_data:
+
+networks:
+  credit-network:
+    driver: bridge
