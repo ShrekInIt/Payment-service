@@ -13,11 +13,36 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./docker/init:/docker-entrypoint-initdb.d
     networks:
-      - credit-network
+      - payment-network
+
+  postgres-account:
+    image: postgres:16
+    container_name: account-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${ACCOUNT_POSTGRES_DB}
+      POSTGRES_USER: ${ACCOUNT_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${ACCOUNT_POSTGRES_PASSWORD}
+    ports:
+      - "${ACCOUNT_POSTGRES_PORT}:5435"
+    volumes:
+      - account_postgres_data:/var/lib/postgresql/data
+      - ./docker/init:/docker-entrypoint-initdb.d
+    networks:
+      - payment-network
+
+  redis:
+    image: redis:7
+    container_name: payment_redis
+    ports:
+      - "${REDIS_PORT}:6379"
+    networks:
+      - payment-network
 
 volumes:
   postgres_data:
+  account_postgres_data:
 
 networks:
-  credit-network:
+  payment-network:
     driver: bridge
