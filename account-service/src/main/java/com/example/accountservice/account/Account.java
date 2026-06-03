@@ -10,5 +10,6 @@ public record Account(
         BigDecimal balance,
         AccountCurrency currency,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        LocalDateTime updatedAt,
+        Long version
 ) {}

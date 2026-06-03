@@ -32,7 +32,8 @@ public class AccountService {
                 INITIAL_BALANCE,
                 request.currency(),
                 now,
-                now
+                now,
+                0L
         );
 
         accountRepository.save(account);
@@ -45,7 +46,10 @@ public class AccountService {
             throw new IllegalArgumentException("Amount must be positive");
         }
 
-        int updatedRows = accountRepository.debit(id, request.amount());
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new AccountNotFoundException("Account not found with ID: " + id));
+
+        int updatedRows = accountRepository.debit(id, request.amount(), account.version());
 
         if (updatedRows == 0) {
             throw new IllegalArgumentException("Account not found or insufficient funds");
@@ -59,7 +63,10 @@ public class AccountService {
             throw new IllegalArgumentException("Amount must be positive");
         }
 
-        int updatedRows = accountRepository.credit(id, request.amount());
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new AccountNotFoundException("Account not found with ID: " + id));
+
+        int updatedRows = accountRepository.credit(id, request.amount(), account.version());
 
         if (updatedRows == 0) {
             throw new IllegalArgumentException("Account not found or insufficient funds");

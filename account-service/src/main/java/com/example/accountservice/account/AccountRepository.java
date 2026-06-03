@@ -19,8 +19,8 @@ public class AccountRepository {
     public void save(Account account) {
        String sql = """
                 INSERT INTO
-                    accounts (id, owner_name, balance, currency, created_at, updated_at)\s
-                VALUES (?, ?, ?, ?, ?, ?)
+                    accounts (id, owner_name, balance, currency, created_at, updated_at, version)\s
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                """;
        jdbcTemplate.update(
                sql,
@@ -29,13 +29,14 @@ public class AccountRepository {
                account.balance(),
                account.currency().name(),
                account.createdAt(),
-               account.updatedAt()
+               account.updatedAt(),
+               account.version()
        );
     }
 
     public Optional<Account> findById(UUID id) {
        String sql = """
-                SELECT id, owner_name, balance, currency, created_at, updated_at
+                SELECT id, owner_name, balance, currency, created_at, updated_at, version
                 FROM accounts
                 WHERE id = ?
                """;
@@ -48,25 +49,29 @@ public class AccountRepository {
         return Optional.of(accounts.getFirst());
     }
 
-    public int debit(UUID id, BigDecimal amount) {
+    public int debit(UUID id, BigDecimal amount, Long expectedVersion) {
        String sql = """
                 UPDATE accounts
-                SET balance = balance - ?, 
+                SET balance = balance - ?,
+                    version = version + 1,
                     updated_at = now()
                 WHERE id = ?
-                 AND balance >= ?
+                  AND version = ?
+                  AND balance >= ?
                """;
-       return jdbcTemplate.update(sql, amount, id, amount);
+       return jdbcTemplate.update(sql, amount, id, expectedVersion, amount);
     }
 
-    public int credit(UUID id, BigDecimal amount) {
+    public int credit(UUID id, BigDecimal amount, Long expectedVersion) {
        String sql = """
                 UPDATE accounts
-                SET balance = balance + ?, 
+                SET balance = balance + ?,
+                    version = version + 1,
                     updated_at = now()
                 WHERE id = ?
+                    AND version = ?
                """;
-       return jdbcTemplate.update(sql, amount, id);
+       return jdbcTemplate.update(sql, amount, id, expectedVersion);
     }
 
     private static final RowMapper<Account> ACCOUNT_ROW_MAPPER = (rs, rowNum) -> new Account(
@@ -75,6 +80,7 @@ public class AccountRepository {
             rs.getBigDecimal("balance"),
             AccountCurrency.valueOf(rs.getString("currency")),
             rs.getTimestamp("created_at").toLocalDateTime(),
-            rs.getTimestamp("updated_at").toLocalDateTime()
+            rs.getTimestamp("updated_at").toLocalDateTime(),
+            rs.getLong("version")
     );
 }
