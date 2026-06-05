@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -29,6 +30,22 @@ public class TransferService {
 
     @Transactional
     public TransferResponse transfer(TransferRequest request) {
+        Optional<LedgerTransactions> existing =
+                ledgerRepository.findTransactionByReferenceId(request.referenceId());
+
+        if (existing.isPresent()) {
+            LedgerTransactions transaction = existing.get();
+
+            return new TransferResponse(
+                    transaction.id(),
+                    request.fromAccountId(),
+                    request.toAccountId(),
+                    request.amount(),
+                    request.currency(),
+                    transaction.createdAt()
+            );
+        }
+
         Account fromAccount = accountRepository.findById(request.fromAccountId())
                 .orElseThrow(() -> new AccountNotFoundException("From account not found"));
 

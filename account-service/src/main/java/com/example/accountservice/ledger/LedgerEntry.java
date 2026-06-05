@@ -1,6 +1,6 @@
 package com.example.accountservice.ledger;
 
-import com.example.accountservice.account.AccountCurrency;
+import com.example.Currency;
 import lombok.Builder;
 
 import java.math.BigDecimal;
@@ -14,6 +14,6 @@ public record LedgerEntry(
         UUID accountId,
         LedgerEntriesDirection direction,
         BigDecimal amount,
-        AccountCurrency currency,
+        Currency currency,
         LocalDateTime createdAt
 ) {}

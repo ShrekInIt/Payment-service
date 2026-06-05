@@ -1,6 +1,6 @@
 package com.example.accountservice.transfer.dto;
 
-import com.example.accountservice.account.AccountCurrency;
+import com.example.Currency;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
@@ -16,7 +16,7 @@ public record TransferRequest(
         @Positive
         BigDecimal amount,
         @NotNull
-        AccountCurrency currency,
+        Currency currency,
         @NotNull
         UUID referenceId
 ) {}

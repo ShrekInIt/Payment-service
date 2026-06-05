@@ -1,6 +1,6 @@
 package com.example.accountservice.transfer.dto;
 
-import com.example.accountservice.account.AccountCurrency;
+import com.example.Currency;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -11,6 +11,6 @@ public record TransferResponse(
         UUID fromAccountId,
         UUID toAccountId,
         BigDecimal amount,
-        AccountCurrency currency,
+        Currency currency,
         LocalDateTime createdAt
 ) {}

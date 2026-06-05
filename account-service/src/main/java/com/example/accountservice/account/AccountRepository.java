@@ -1,5 +1,6 @@
 package com.example.accountservice.account;
 
+import com.example.Currency;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -78,7 +79,7 @@ public class AccountRepository {
             UUID.fromString(rs.getString("id")),
             rs.getString("owner_name"),
             rs.getBigDecimal("balance"),
-            AccountCurrency.valueOf(rs.getString("currency")),
+            Currency.valueOf(rs.getString("currency")),
             rs.getTimestamp("created_at").toLocalDateTime(),
             rs.getTimestamp("updated_at").toLocalDateTime(),
             rs.getLong("version")

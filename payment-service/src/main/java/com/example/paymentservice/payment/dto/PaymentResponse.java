@@ -1,0 +1,20 @@
+package com.example.paymentservice.payment.dto;
+
+import com.example.Currency;
+import com.example.paymentservice.payment.enums.PaymentStatus;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+public record PaymentResponse(
+        UUID id,
+        UUID fromAccountId,
+        UUID toAccountId,
+        BigDecimal amount,
+        Currency currency,
+        PaymentStatus status,
+        String failureReason,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
+) {}
