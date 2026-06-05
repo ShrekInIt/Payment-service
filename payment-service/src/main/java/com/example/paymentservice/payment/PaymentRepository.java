@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,7 +16,7 @@ import java.util.UUID;
 public class PaymentRepository {
     private final JdbcTemplate jdbcTemplate;
 
-    public Payment save(Payment payment) {
+    public void save(Payment payment) {
         String sql = """
                 INSERT INTO payments (id, from_account_id, to_account_id, amount, currency, status, failure_reason, created_at, updated_at, idempotency_key,version)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -36,7 +35,6 @@ public class PaymentRepository {
                 payment.idempotencyKey(),
                 payment.version());
 
-        return payment;
     }
 
     public Optional<Payment> findById(UUID id) {
